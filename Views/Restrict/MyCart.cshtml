@@ -1,0 +1,94 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@model Cart
+
+@{
+    ViewData["Title"] = "MyCart";
+}
+
+@{
+    var identity = Context.User.Identity;
+    bool isAuth = identity?.IsAuthenticated ?? false;
+}
+<h1>
+    @((isAuth) ? $"Your Cart - {@identity?.Name}" : "Tara Store - Your Cart")
+</h1>
+
+<p>
+    <a asp-action="SearchView" asp-controller="Menu">Continue Shopping</a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>
+                Product
+            </th>
+            <th class="text-right">
+                Price
+            </th>
+            <th class="text-right">
+                Quantity
+            </th>
+
+            <th>
+
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.CartItems())
+        {
+            <tr>
+                <td>
+                    @item.Product?.ProductID">@item.Product?.ProductName
+                </td>
+                <td class="text-right">
+                    @item.Product?.UnitPrice.ToString("c")
+                </td>
+
+                <td class="text-right">
+                    <form asp-action="UpdateCart" asp-controller="Shop" method="post">
+                        <input type="hidden" value="@item.Product?.ProductID" name="productPK" />
+                        <input type="number" value="@item.Quantity" name="qty" size="2" required min="1" max="20" />
+                        <input type="submit" class="btn btn-sm btn-warning" value="Update Quantity" />
+                    </form>
+                </td>
+
+                <td class="text-right">
+                    @((item.Quantity * item.Product.UnitPrice).ToString("c"))
+                </td>
+
+                <td>
+                    <form asp-action="RemoveFromCart" asp-controller="Shop" method="post">
+                        <input type="hidden" value="@item.Product.ProductID" name="productPK" />
+                        <input type="submit" class="btn btn-sm btn-danger" value="Remove Product" />
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="5" class="text-right">
+                Order Total:
+            </td>
+            <td>
+                @Model.ComputeOrderTotal()?.ToString("c")
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+<p>
+    @if (isAuth)
+    {
+        <a asp-action="PlaceOrder" asp-controller="Restrict">Place Order</a>
+    }
+    else
+    {
+        <a asp-action="CheckOut" asp-controller="Restrict">Check Out</a>
+    }
+</p>

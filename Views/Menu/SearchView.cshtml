@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Search View";
+}
+
+<h1>Search Available Products</h1>
+
+<form asp-action="SearchView" method="post">
+    <div class="form-group">
+        <p>
+            Search by Product Name: <input maxlength="20" type="text" name="searchName" value="@ViewData["NameSearch"]" />
+            Product Type: <input maxlength="20" type="text" name="searchType" value="@ViewData["TypeSearch"]" />
+            <input type="submit" value="Search" class="btn btn-primary" />
+            <a asp-action="SearchView">Reset</a>
+        </p>
+    </div>
+</form>
+
+@if (Model.Any())
+{
+    <table class="table d-sm-table table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Unit Price</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.ProductName</td>
+                    <td>@p.UnitPrice.ToString("c2")</td>
+                    <td>@p.Description</td>
+                    <td><input type="button" value="Add to Cart" onclick="location.href='@Url.Action("AddToCart", "Menu")'" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+

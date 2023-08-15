@@ -1,0 +1,65 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model IEnumerable<OrderLineItem>
+
+@{
+    ViewData["Title"] = "My Orders";
+}
+
+@{
+    var identity = Context.User.Identity;
+}
+
+@if (Model.Any())
+{
+    <h1>Orders for @identity?.Name</h1>
+
+    <table class="table table-sm table-striped table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    Order Date
+                </th>
+                <th>
+                    Product
+                </th>
+                <th class="text-end">
+                    Price
+                </th>
+                <th class="text-end">
+                    Quanitity
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @($"{item.Order?.OrderDate:d}")
+                    </td>
+                    <td>
+                        @item.Product.ProductName
+                    </td>
+                    <td class="text-end">
+                        @item.Product.UnitPrice.ToString("c")
+                    </td>
+                    <td class="text-end">
+                        @item.Quantity
+                    </td>
+                    <td>
+                        <input type="button" value="Cancel Order" onclick="location.href='@Url.Action("Delete", "Restrict")'" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h1>No orders for @identity?.Name</h1>
+}
